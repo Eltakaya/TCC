@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     
-                    <form action="{{ route('classificacoes.update', $classificacao) }}" method="POST">
+                    <form action="{{ route('classificacoes.update', $classificacao->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -32,6 +32,11 @@
                             <x-input-error :messages="$errors->get('intervalo_max')" class="mt-2" />
                         </div>
 
+                        <div class="mt-4">
+                            <x-input-label for="acoes_recomendadas" :value="__('Ações Recomendadas (Opcional)')" />
+                            <textarea name="acoes_recomendadas" id="acoes_recomendadas" rows="3" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('acoes_recomendadas', $classificacao->acoes_recomendadas) }}</textarea>
+                            <x-input-error :messages="$errors->get('acoes_recomendadas')" class="mt-2" />
+                        </div>
 
                         <div class="flex items-center justify-end mt-4">
                             <x-primary-button class="ml-4">

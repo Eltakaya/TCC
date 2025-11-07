@@ -24,6 +24,7 @@ class ClassificacaoController extends Controller
             'tipo_class' => 'required|string|max:100|unique:classificacoes',
             'intervalo_min' => 'required|integer|min:0',
             'intervalo_max' => 'required|integer|gte:intervalo_min', // 'gte' = "maior ou igual a"
+            'acoes_recomendadas' => 'nullable|string',
         ]);
 
         Classificacao::create($request->all());
@@ -42,6 +43,7 @@ class ClassificacaoController extends Controller
             'tipo_class' => 'required|string|max:100|unique:classificacoes,tipo_class,' . $classificacao->id,
             'intervalo_min' => 'required|integer|min:0',
             'intervalo_max' => 'required|integer|gte:intervalo_min',
+            'acoes_recomendadas' => 'nullable|string',
         ]);
 
         $classificacao->update($request->all());
