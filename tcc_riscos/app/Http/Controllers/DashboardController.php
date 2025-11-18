@@ -14,21 +14,19 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // Esta é a consulta principal:
-        // 1. Buscamos todas as Avaliações...
-        $avaliacoesPassadas = Avaliacao::whereHas('evento', function($query) {
-            // 2. ...que pertencem a eventos do usuário logado...
-            $query->where('user_id', Auth::id())
-                  // 3. ...e que já terminaram (data_fim é anterior a agora).
-                  ->where('data_fim', '<', Carbon::now());
+        // Buscamos TODAS as avaliações feitas pelo usuário
+        // (Não importa se o evento já passou ou se será no futuro)
+        $avaliacoes = Avaliacao::whereHas('evento', function($query) {
+            // Garante que o evento pertence ao usuário logado
+            $query->where('user_id', Auth::id());
         })
-        // 4. Já trazemos os dados relacionados para não sobrecarregar o banco
+        // Trazemos os dados relacionados
         ->with(['evento', 'classificacao', 'planoMitigacao'])
-        // 5. Ordenamos pela data da avaliação mais recente
+        // Ordenamos pela data em que a AVALIAÇÃO foi feita (mais recente primeiro)
         ->latest('data_avaliacao')
         ->get();
 
-        // 6. Enviamos os dados para a view
-        return view('dashboard', compact('avaliacoesPassadas'));
+        // Enviamos para a view (mudei o nome da variável para $avaliacoes)
+        return view('dashboard', compact('avaliacoes'));
     }
 }

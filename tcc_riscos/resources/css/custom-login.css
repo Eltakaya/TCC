@@ -15,7 +15,7 @@ body{
 	max-width:525px;
 	min-height:670px;
 	position:relative;
-	background: url(https://img.freepik.com/fotos-gratis/casal-comemorando-com-champanhe-no-escuro_53876-94390.jpg?t=st=1762526602~exp=1762530202~hmac=913748b6a7dad6ba7096ed74332ef9636cd6ec4d5a27eee85327ad591b7ed171&w=2000) no-repeat center;
+	background: url('C:\Users\Edu\Desktop\Tcc\TCC\tcc_riscos\public\img\fundolog.png') no-repeat center;
     background-size: cover;
 	border-radius: 8px;  /* Você pode aumentar (ex: 12px) ou diminuir se quiser */
     overflow: hidden;
