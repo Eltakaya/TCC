@@ -33,7 +33,9 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($tipoCriterios as $tipoCriterio)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $tipoCriterio->descricao }}</td>
+                                        <td class="px-6 py-4 whitespace-normal max-w-xs break-words text-sm font-medium text-gray-900">
+                                            {{ $tipoCriterio->descricao }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $tipoCriterio->valor }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $tipoCriterio->criterio->descricao }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
