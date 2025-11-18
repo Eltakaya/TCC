@@ -14,82 +14,139 @@
         Registro de Avaliações de Risco (Todos os Eventos)
     </h3>
 
-    @forelse ($avaliacoes as $avaliacao)
-        <div class="mt-4 p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition-shadow duration-200">
-            
-            <div class="flex justify-between items-start">
-                <div>
-                    <h4 class="text-md font-bold text-gray-800 flex items-center gap-2">
-                        {{ $avaliacao->evento->nome }}
-                        
-                        @if(\Carbon\Carbon::parse($avaliacao->evento->data_inicio)->isFuture())
-                            <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800 font-semibold">
-                                Agendado
-                            </span>
-                        @else
-                            <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600 font-semibold">
-                                Realizado
-                            </span>
-                        @endif
-                    </h4>
-                    <p class="text-sm text-gray-600">
-                        Data: {{ \Carbon\Carbon::parse($avaliacao->evento->data_inicio)->format('d/m/Y H:i') }}
-                    </p>
-                    <p class="text-sm text-gray-600">
-                        Local: {{ $avaliacao->evento->local }}
-                    </p>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="p-6 text-gray-900">
+        
+        <h3 class="text-lg font-semibold border-b border-gray-300 pb-3 mb-6">
+            Registro de Avaliações de Risco
+        </h3>
+
+        @forelse ($avaliacoes as $avaliacao)
+            <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+                
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            {{ $avaliacao->evento->nome }}
+                            @if(\Carbon\Carbon::parse($avaliacao->evento->data_inicio)->isFuture())
+                                <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800">Agendado</span>
+                            @else
+                                <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">Realizado</span>
+                            @endif
+                        </h4>
+                        <p class="text-sm text-gray-600">Local: {{ $avaliacao->evento->local }}</p>
+                    </div>
+                    <div class="text-right text-xs text-gray-500">
+                        Avaliado em: {{ \Carbon\Carbon::parse($avaliacao->data_avaliacao)->format('d/m/Y') }}
+                    </div>
                 </div>
 
-                <div class="text-right text-xs text-gray-500">
-                    Avaliado em: {{ \Carbon\Carbon::parse($avaliacao->data_avaliacao)->format('d/m/Y') }}
-                </div>
-            </div>
+                <hr class="mb-4">
 
-            <hr class="my-3">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <h5 class="font-semibold text-gray-700">Classificação de Risco</h5>
-                    <p class="text-sm mt-1">
-                        <span class="font-bold text-indigo-700">
-                            {{ $avaliacao->classificacao->tipo_class ?? 'Não classificado' }}
-                        </span>
-                        <span class="text-gray-500">(Pontuação: {{ $avaliacao->pontuacao_total ?? 'N/A' }})</span>
-                    </p>
-                </div>
-
-                <div>
-                    <h5 class="font-semibold text-gray-700">Plano de Mitigação</h5>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
-                    @if($avaliacao->planoMitigacao)
-                        <p class="text-sm mt-1 text-green-700 font-medium flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            Plano Definido
+                    <div class="flex flex-col justify-center">
+                        <h5 class="font-semibold text-gray-700 mb-1">Classificação Geral</h5>
+                        <div class="text-3xl font-bold text-indigo-700">
+                            {{ $avaliacao->pontuacao_total ?? 0 }} <span class="text-sm text-gray-500 font-normal">pontos</span>
+                        </div>
+                        <p class="text-lg font-medium text-gray-800">
+                            {{ $avaliacao->classificacao->tipo_class ?? 'Não classificado' }}
                         </p>
-                        <p class="text-xs text-gray-600 mt-1 truncate">
-                            {{ Str::limit($avaliacao->planoMitigacao->descricao, 100) }}
-                        </p>
-                    @elseif($avaliacao->classificacao && $avaliacao->classificacao->tipo_class != 'Risco Baixo')
-                        <a href="{{ route('planos.create', $avaliacao) }}" 
-                            class="inline-flex items-center mt-1 px-3 py-1 bg-red-100 border border-red-200 rounded-md font-semibold text-xs text-red-700 hover:bg-red-200">
-                            ⚠️ Pendente: Criar Plano
-                        </a>
-                    @else
-                        <p class="text-sm text-gray-500 mt-1">Nenhum plano necessário.</p>
-                    @endif
+                    </div>
+
+                    <div>
+                        <h5 class="font-semibold text-gray-700 mb-2">Plano de Mitigação</h5>
+                        @if($avaliacao->planoMitigacao)
+                            <div class="bg-green-50 p-3 rounded border border-green-200 h-32 overflow-y-auto text-sm">
+                                <p class="text-green-800 font-medium mb-1">✓ Plano Definido</p>
+                                <p class="text-gray-600">{{ $avaliacao->planoMitigacao->descricao }}</p>
+                            </div>
+                            @elseif($avaliacao->classificacao && $avaliacao->classificacao->tipo_class != 'Risco Baixo')
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500 mb-3">Pendente.</p>
+                                    
+                                    <a href="{{ route('planos.create', $avaliacao) }}" 
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none transition ease-in-out duration-150">
+                                        Criar Plano
+                                    </a>
+                                </div>
+                        @else
+                            <div class="h-32 flex items-center justify-center bg-gray-50 rounded border border-gray-200 text-gray-500 text-sm">
+                                Não necessário
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="relative h-40 w-full">
+                        <h5 class="font-semibold text-gray-700 mb-2 text-center text-sm">Distribuição do Risco (%)</h5>
+                        <canvas id="chart-{{ $avaliacao->id }}"></canvas>
+                    </div>
+
                 </div>
             </div>
-        </div>
-    
-    @empty
-        <div class="mt-4 p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
-            Nenhuma avaliação registrada ainda.
-            <br>
-            <a href="{{ route('eventos.index') }}" class="text-indigo-600 hover:underline mt-2 inline-block">
-                Ir para Meus Eventos e avaliar agora
-            </a>
-        </div>
-    @endforelse
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const ctx{{ $avaliacao->id }} = document.getElementById('chart-{{ $avaliacao->id }}');
+                    
+                    new Chart(ctx{{ $avaliacao->id }}, {
+                        type: 'bar',
+                        data: {
+                            // Labels vindas do Controller (ex: Humanos, Naturais)
+                            labels: @json($avaliacao->chartLabels),
+                            datasets: [{
+                                label: '% de Impacto',
+                                // Dados vindos do Controller
+                                data: @json($avaliacao->chartData),
+                                backgroundColor: [
+                                    'rgba(156, 122, 242, 0.7)', // Lilás
+                                    'rgba(249, 230, 92, 0.7)',  // Amarelo
+                                    'rgba(43, 30, 75, 0.7)',    // Roxo Escuro
+                                    'rgba(75, 192, 192, 0.7)',
+                                    'rgba(255, 99, 132, 0.7)'
+                                ],
+                                borderColor: [
+                                    'rgba(156, 122, 242, 1)',
+                                    'rgba(249, 230, 92, 1)',
+                                    'rgba(43, 30, 75, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(255, 99, 132, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            layout: {
+                                padding: 20
+                            },
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false } // Esconde a legenda para economizar espaço
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100, // Escala até 100%
+                                    ticks: { font: { size: 10 } }
+                                },
+                                x: {
+                                    ticks: { font: { size: 10 } }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+
+        @empty
+            <div class="mt-10 text-center text-gray-500">
+                Nenhuma avaliação registrada.
+            </div>
+        @endforelse
+    </div>
 
 </div>
             </div>
