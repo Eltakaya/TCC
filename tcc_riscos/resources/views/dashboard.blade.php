@@ -11,17 +11,14 @@
             <div class="p-6 text-gray-900">
     
     <h3 class="text-lg font-semibold border-b border-gray-300 pb-3">
-        Registro de Avaliações de Risco (Todos os Eventos)
+        Registro de Avaliações de Risco 
     </h3>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <div class="p-6 text-gray-900">
         
-        <h3 class="text-lg font-semibold border-b border-gray-300 pb-3 mb-6">
-            Registro de Avaliações de Risco
-        </h3>
-
+        
         @forelse ($avaliacoes as $avaliacao)
             <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
                 
